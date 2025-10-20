@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login - Figuras Geométricas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #ffecd2, #fcb69f);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .figure-img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card p-4" style="width: 22rem;">
+  <div class="text-center mb-3">
+    <!-- Imagen decorativa -->
+    <img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" alt="Figura geométrica" class="figure-img">
+  </div>
+
+  <h4 class="text-center mb-3">Iniciar Sesión</h4>
+
+  <form id="loginForm" novalidate>
+    <div class="mb-3">
+      <label for="usuario" class="form-label">Usuario</label>
+      <input type="text" class="form-control" id="usuario" placeholder="Ingresa tu usuario" required>
+      <div class="invalid-feedback">Ingresa tu usuario.</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="contrasena" class="form-label">Contraseña</label>
+      <input type="password" class="form-control" id="contrasena" placeholder="Ingresa tu contraseña" required>
+      <div class="invalid-feedback">Ingresa tu contraseña.</div>
+    </div>
+
+    <button type="submit" class="btn btn-warning w-100">
+      <i class="bi bi-box-arrow-in-right"></i> Entrar
+    </button>
+
+    <div id="loginError" class="text-danger text-center mt-3 d-none">
+      Usuario o contraseña incorrectos
+    </div>
+  </form>
+</div>
+
+<script>
+(function(){
+  const loginForm = document.getElementById('loginForm');
+  const usuarioInput = document.getElementById('usuario');
+  const contrasenaInput = document.getElementById('contrasena');
+  const loginError = document.getElementById('loginError');
+
+  loginForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    loginError.classList.add('d-none');
+    loginForm.classList.remove('was-validated');
+
+    const usuario = usuarioInput.value.trim();
+    const contrasena = contrasenaInput.value.trim();
+
+    if(!usuario || !contrasena){
+      loginForm.classList.add('was-validated');
+      return;
+    }
+
+    // Validación del usuario
+    if(usuario === 'Pamela' && contrasena === '1234'){
+      // Guardamos sesión (simple simulación con localStorage)
+      localStorage.setItem('usuarioActivo', usuario);
+      window.location.href = 'panelprincipal.html';
+    } else {
+      loginError.classList.remove('d-none');
+      usuarioInput.classList.add('is-invalid');
+      contrasenaInput.classList.add('is-invalid');
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
