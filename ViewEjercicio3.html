@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculadora: Tipo de Triángulo</title>
+  <!-- Bootstrap 5 CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body { background: #f8f9fa; }
+    .card { border-radius: 12px; }
+    .result-number { font-weight: 700; font-size: 1.25rem; }
+    .triangle-icon { font-size: 3rem; }
+  </style>
+</head>
+<body>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h3 class="card-title mb-3">Calculadora: Tipo de Triángulo</h3>
+          <p class="text-muted">Ingresa las longitudes de los tres lados. Se validan que sean números positivos y cumplan la desigualdad triangular.</p>
+
+          <form id="triangleForm" novalidate>
+            <div class="mb-3">
+              <label for="sideA" class="form-label">Lado A</label>
+              <input type="number" class="form-control" id="sideA" placeholder="Ej. 5" required min="0.0000001" step="any">
+              <div class="invalid-feedback">Por favor ingresa un lado válido y positivo.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="sideB" class="form-label">Lado B</label>
+              <input type="number" class="form-control" id="sideB" placeholder="Ej. 5" required min="0.0000001" step="any">
+              <div class="invalid-feedback">Por favor ingresa un lado válido y positivo.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="sideC" class="form-label">Lado C</label>
+              <input type="number" class="form-control" id="sideC" placeholder="Ej. 5" required min="0.0000001" step="any">
+              <div class="invalid-feedback">Por favor ingresa un lado válido y positivo.</div>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-warning"><i class="bi bi-calculator"></i> Calcular</button>
+              <button type="button" id="resetTriBtn" class="btn btn-outline-secondary">Limpiar</button>
+            </div>
+          </form>
+
+          <hr class="my-4">
+
+          <div id="triResults" class="d-none text-center">
+            <h5>Resultado</h5>
+            <div class="p-3 rounded" id="triResultCard">
+              <i class="triangle-icon bi"></i>
+              <div class="result-number mt-2" id="triType">—</div>
+            </div>
+            <div class="small text-muted mt-2">Verifica que los lados cumplan: a + b > c, a + c > b, b + c > a</div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-3 text-muted small">Hecho con Bootstrap y Bootstrap Icons</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function(){
+'use strict';
+
+const triangleForm = document.getElementById('triangleForm');
+const sideA = document.getElementById('sideA');
+const sideB = document.getElementById('sideB');
+const sideC = document.getElementById('sideC');
+const triResults = document.getElementById('triResults');
+const triType = document.getElementById('triType');
+const triResultCard = document.getElementById('triResultCard');
+const resetTriBtn = document.getElementById('resetTriBtn');
+
+function isPositiveNumber(value){
+  if(value === '' || value === null || isNaN(value)) return false;
+  return Number(value) > 0;
+}
+
+function round(num, decimals = 4){
+  const factor = Math.pow(10, decimals);
+  return Math.round((num + Number.EPSILON) * factor)/factor;
+}
+
+triangleForm.addEventListener('submit', function(e){
+  e.preventDefault();
+  triangleForm.classList.remove('was-validated');
+
+  const aVal = sideA.value.trim();
+  const bVal = sideB.value.trim();
+  const cVal = sideC.value.trim();
+
+  let valid = true;
+
+  [sideA, sideB, sideC].forEach(input=>{
+    if(!isPositiveNumber(input.value.trim())){
+      input.classList.add('is-invalid');
+      valid = false;
+    } else {
+      input.classList.remove('is-invalid');
+      input.classList.add('is-valid');
+    }
+  });
+
+  if(!valid){
+    triangleForm.classList.add('was-validated');
+    triResults.classList.add('d-none');
+    return;
+  }
+
+  const a = Number(aVal);
+  const b = Number(bVal);
+  const c = Number(cVal);
+
+  // Desigualdad triangular
+  if(a + b <= c || a + c <= b || b + c <= a){
+    triType.textContent = 'No forma un triángulo';
+    triResultCard.classList.remove('bg-success','bg-primary','bg-info');
+    triResultCard.classList.add('bg-danger','text-white');
+    triResults.classList.remove('d-none');
+    triResultCard.querySelector('i').className = 'triangle-icon bi bi-x-circle';
+    return;
+  }
+
+  let tipo = '';
+  let colorClass = '';
+  let iconClass = '';
+
+  if(a===b && b===c){
+    tipo = 'Equilátero';
+    colorClass = 'bg-success text-white';
+    iconClass = 'bi-triangle';
+  } else if(a===b || a===c || b===c){
+    tipo = 'Isósceles';
+    colorClass = 'bg-primary text-white';
+    iconClass = 'bi-triangle-half';
+  } else {
+    tipo = 'Escaleno';
+    colorClass = 'bg-info text-white';
+    iconClass = 'bi-triangle-fill';
+  }
+
+  triType.textContent = tipo;
+  triResultCard.className = 'p-3 rounded '+colorClass;
+  triResultCard.querySelector('i').className = 'triangle-icon '+iconClass;
+  triResults.classList.remove('d-none');
+});
+
+resetTriBtn.addEventListener('click', function(){
+  triangleForm.reset();
+  [sideA,sideB,sideC].forEach(i=>i.classList.remove('is-valid','is-invalid'));
+  triangleForm.classList.remove('was-validated');
+  triResults.classList.add('d-none');
+});
+
+[sideA,sideB,sideC].forEach(input=>{
+  input.addEventListener('input',()=>{
+    input.classList.remove('is-invalid','is-valid');
+  });
+});
+
+})();
+</script>
+</body>
+</html>
