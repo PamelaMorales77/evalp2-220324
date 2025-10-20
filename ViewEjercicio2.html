@@ -71,6 +71,62 @@
           </div>
 
           <div class="text-center mt-3 text-muted small">Hecho con Bootstrap</div>
+          
+          <!-- ===================================================== -->
+<!-- NUEVA SECCIÓN: Área y Perímetro de un Rectángulo -->
+<!-- ===================================================== -->
+<div class="card shadow-sm mt-5">
+  <div class="card-body p-4">
+    <h3 class="card-title mb-3">Calculadora: Rectángulo</h3>
+    <p class="text-muted">Ingresa la base y la altura del rectángulo. Se validan que los campos no estén vacíos y que los números sean positivos.</p>
+
+    <form id="rectangleForm" novalidate>
+      <div class="mb-3">
+        <label for="base" class="form-label">Base</label>
+        <input type="number" class="form-control" id="base" name="base" placeholder="Ej. 5" required min="0.0000001" step="any">
+        <div class="invalid-feedback">Por favor ingresa una base válida y positiva.</div>
+      </div>
+
+      <div class="mb-3">
+        <label for="heightRect" class="form-label">Altura</label>
+        <input type="number" class="form-control" id="heightRect" name="heightRect" placeholder="Ej. 8" required min="0.0000001" step="any">
+        <div class="invalid-feedback">Por favor ingresa una altura válida y positiva.</div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-success">Calcular</button>
+        <button type="button" id="resetRectBtn" class="btn btn-outline-secondary">Limpiar</button>
+      </div>
+    </form>
+
+    <hr class="my-4">
+
+    <div id="rectResults" class="d-none">
+      <h5>Resultados</h5>
+      <div class="row gy-2">
+        <div class="col-12 col-md-6">
+          <div class="border rounded p-3 bg-white">
+            <div class="text-muted small">Área</div>
+            <div class="result-number" id="rectArea">—</div>
+            <div class="small text-muted">Fórmula: A = base × altura</div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <div class="border rounded p-3 bg-white">
+            <div class="text-muted small">Perímetro</div>
+            <div class="result-number" id="rectPerimeter">—</div>
+            <div class="small text-muted">Fórmula: P = 2 × (base + altura)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <!--  final seccion-->
+
+
+
         </div>
       </div>
     </div>
@@ -169,6 +225,77 @@
             input.classList.remove('is-valid');
           });
         });
+
+        // =====================================================
+// Cálculo para el Rectángulo
+// =====================================================
+const rectForm = document.getElementById('rectangleForm');
+const baseInput = document.getElementById('base');
+const heightRectInput = document.getElementById('heightRect');
+const rectResults = document.getElementById('rectResults');
+const rectAreaEl = document.getElementById('rectArea');
+const rectPerimeterEl = document.getElementById('rectPerimeter');
+const resetRectBtn = document.getElementById('resetRectBtn');
+
+rectForm.addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  rectForm.classList.remove('was-validated');
+
+  const baseVal = baseInput.value.trim();
+  const heightVal = heightRectInput.value.trim();
+
+  let valid = true;
+
+  if (!isPositiveNumber(baseVal)) {
+    baseInput.classList.add('is-invalid');
+    valid = false;
+  } else {
+    baseInput.classList.remove('is-invalid');
+    baseInput.classList.add('is-valid');
+  }
+
+  if (!isPositiveNumber(heightVal)) {
+    heightRectInput.classList.add('is-invalid');
+    valid = false;
+  } else {
+    heightRectInput.classList.remove('is-invalid');
+    heightRectInput.classList.add('is-valid');
+  }
+
+  if (!valid) {
+    rectForm.classList.add('was-validated');
+    rectResults.classList.add('d-none');
+    return;
+  }
+
+  const base = Number(baseVal);
+  const height = Number(heightVal);
+
+  const area = base * height;
+  const perimeter = 2 * (base + height);
+
+  rectAreaEl.textContent = round(area, 4) + ' (unidades²)';
+  rectPerimeterEl.textContent = round(perimeter, 4) + ' (unidades)';
+
+  rectResults.classList.remove('d-none');
+});
+
+resetRectBtn.addEventListener('click', function () {
+  rectForm.reset();
+  baseInput.classList.remove('is-valid', 'is-invalid');
+  heightRectInput.classList.remove('is-valid', 'is-invalid');
+  rectForm.classList.remove('was-validated');
+  rectResults.classList.add('d-none');
+});
+
+[baseInput, heightRectInput].forEach(input => {
+  input.addEventListener('input', () => {
+    input.classList.remove('is-invalid');
+    input.classList.remove('is-valid');
+  });
+});
+
 
       })();
     </script>
